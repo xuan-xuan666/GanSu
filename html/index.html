@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甘肃文旅融合科学数据中心</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-top">
+                <div class="container">
+                    <div class="logo">
+                        <img src="../images/logo.png" alt="甘肃文旅融合科学数据中心">
+                        <h1>甘肃文旅融合科学数据中心</h1>
+                    </div>
+                    <div class="header-links">
+                        <a href="javascript:;">登录</a>
+                        <a href="javascript:;">注册</a>
+                        <a href="javascript:;">中文</a>
+                    </div>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <div class="container">
+                    <ul>
+                        <li v-for="item in navItems" :key="item.path">
+                            <a :href="item.href" :class="{ active: currentItem === item.path }">{{ item.name }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <section class="carousel">
+            <div class="carousel-container">
+                <div class="carousel-slides" :style="{ transform: 'translateX(' + (-currentSlide * 100) + '%' ) }">
+                    <div class="slide" v-for="(slide, index) in slides" :key="index">
+                        <img :src="slide.image" :alt="slide.title">
+                        <div class="slide-caption" v-if="slide.title">
+                            <h2>{{ slide.title }}</h2>
+                            <p>{{ slide.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-controls">
+                    <button @click="prevSlide" class="control-btn prev">❮</button>
+                    <button @click="nextSlide" class="control-btn next">❯</button>
+                </div>
+                <div class="carousel-dots">
+                    <span 
+                        v-for="(slide, index) in slides" 
+                        :key="index" 
+                        class="dot" 
+                        :class="{ active: currentSlide === index }"
+                        @click="currentSlide = index">
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-overview">
+            <div class="container">
+                <div class="overview-title">
+                    <h2>核心数据总览</h2>
+                </div>
+                <div class="overview-grid">
+                    <div class="overview-item" v-for="(item, index) in overviewData" :key="index">
+                        <div class="overview-number">{{ item.number }}</div>
+                        <div class="overview-label">{{ item.label }}</div>
+                    </div>
+                </div>
+                <div class="overview-details">
+                    <div class="detail-panel">
+                        <div class="panel-header">
+                            <h3>今日各景区客流热力图</h3>
+                            <span class="update-time">更新时间：{{ currentTime }}</span>
+                        </div>
+                        <div class="heatmap-container">
+                            <div class="heatmap-grid">
+                                <div 
+                                    class="heatmap-cell" 
+                                    v-for="(cell, index) in heatmapData" 
+                                    :key="index"
+                                    :style="{ 
+                                        backgroundColor: getHeatmapColor(cell.value),
+                                        opacity: cell.opacity
+                                    }"
+                                    :title="`${cell.name}: ${cell.value}人`">
+                                    <span class="cell-label">{{ cell.name }}</span>
+                                    <span class="cell-value">{{ cell.value }}人</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="panel-header">
+                            <h3>当前天气监测预警</h3>
+                        </div>
+                        <div class="weather-info">
+                            <div class="weather-item" v-for="(weather, index) in weatherData" :key="index">
+                                <div class="weather-icon" :class="getWeatherClass(weather.type)"></div>
+                                <div class="weather-content">
+                                    <div class="weather-location">{{ weather.location }}</div>
+                                    <div class="weather-status">{{ weather.status }}</div>
+                                    <div class="weather-temp">{{ weather.temp }}</div>
+                                    <div class="weather-warning" v-if="weather.warning">
+                                        <span class="warning-icon">⚠️</span>
+                                        {{ weather.warning }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="panel-header">
+                            <h3>最新入库数据提示</h3>
+                        </div>
+                        <div class="latest-updates">
+                            <div class="update-item" v-for="(update, index) in latestUpdates" :key="index">
+                                <span class="update-time-badge">{{ update.time }}</span>
+                                <span class="update-content">{{ update.content }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>综合新闻</h2>
+                    <a href="javascript:;" class="more-link">更多 &gt;</a>
+                </div>
+                <div class="news-list">
+                    <div class="news-item" v-for="(news, index) in newsList" :key="index">
+                        <span class="news-date">{{ news.date }}</span>
+                        <a :href="news.href" class="news-title">{{ news.title }}</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-resources">
+            <div class="container">
+                <div class="section-title">
+                    <h2>数据资源</h2>
+                    <a href="javascript:;" class="more-link">更多 &gt;</a>
+                </div>
+                <div class="resources-grid">
+                    <div class="resource-card" v-for="(resource, index) in dataResources" :key="index">
+                        <div class="resource-icon">
+                            <i :class="resource.icon"></i>
+                        </div>
+                        <h3>{{ resource.title }}</h3>
+                        <p>{{ resource.description }}</p>
+                        <a :href="resource.href" class="resource-link">进入 &gt;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="special-topic">
+            <div class="container">
+                <div class="section-title">
+                    <h2>专题数据</h2>
+                    <a href="javascript:;" class="more-link">更多 &gt;</a>
+                </div>
+                <div class="topic-grid">
+                    <div class="topic-item" v-for="(topic, index) in specialTopics" :key="index">
+                        <div class="topic-image" :style="{ backgroundImage: 'url(' + topic.image + ')' }"></div>
+                        <div class="topic-info">
+                            <h3>{{ topic.title }}</h3>
+                            <p>{{ topic.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="model-resources">
+            <div class="container">
+                <div class="section-title">
+                    <h2>模型资源</h2>
+                    <a href="javascript:;" class="more-link">更多 &gt;</a>
+                </div>
+                <div class="models-list">
+                    <div class="model-item" v-for="(model, index) in modelResources" :key="index">
+                        <div class="model-content">
+                            <h4>{{ model.title }}</h4>
+                            <p>{{ model.description }}</p>
+                            <a :href="model.href" class="model-link">详情 &gt;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="science-popularization">
+            <div class="container">
+                <div class="section-title">
+                    <h2>科普专栏</h2>
+                    <a href="javascript:;" class="more-link">更多 &gt;</a>
+                </div>
+                <div class="popularization-grid">
+                    <div class="pop-item" v-for="(item, index) in 科普Items" :key="index">
+                        <img :src="item.image" :alt="item.title">
+                        <div class="pop-content">
+                            <h4>{{ item.title }}</h4>
+                            <p>{{ item.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="platform-intro">
+            <div class="container">
+                <div class="section-title">
+                    <h2>平台介绍</h2>
+                </div>
+                <div class="intro-content">
+                    <div class="intro-text">
+                        <p>{{ platformIntro }}</p>
+                    </div>
+                    <div class="intro-stats">
+                        <div class="stat-item" v-for="(stat, index) in platformStats" :key="index">
+                            <div class="stat-number">{{ stat.number }}</div>
+                            <div class="stat-label">{{ stat.label }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>关于我们</h4>
+                        <ul>
+                            <li><a href="javascript:;">中心简介</a></li>
+                            <li><a href="javascript:;">组织机构</a></li>
+                            <li><a href="javascript:;">联系我们</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>数据资源</h4>
+                        <ul>
+                            <li><a href="javascript:;">数据检索</a></li>
+                            <li><a href="javascript:;">数据下载</a></li>
+                            <li><a href="javascript:;">数据服务</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>专题数据</h4>
+                        <ul>
+                            <li><a href="javascript:;">文旅资源</a></li>
+                            <li><a href="javascript:;">生态保护</a></li>
+                            <li><a href="javascript:;">气候变化</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>技术支持</h4>
+                        <ul>
+                            <li><a href="javascript:;">帮助中心</a></li>
+                            <li><a href="javascript:;">常见问题</a></li>
+                            <li><a href="javascript:;">意见反馈</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2026 甘肃文旅融合科学数据中心 版权所有</p>
+                    <p>备案号：陇ICP备12345678号</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="../js/app.js"></script>
+</body>
+</html>
