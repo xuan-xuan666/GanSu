@@ -13,6 +13,7 @@ import ModelResourcesView from '../views/ModelResourcesView.vue'
 import TopicDataView from '../views/TopicDataView.vue'
 import TopicDetailView from '../views/TopicDetailView.vue'
 import DataResourcesView from '../views/DataResourcesView.vue'
+import ScenicSpotMonitoringView from '../views/ScenicSpotMonitoringView.vue'
 
 const routes = [
     {
@@ -84,6 +85,11 @@ const routes = [
         path: '/data-resources',
         name: 'data-resources',
         component: DataResourcesView
+    },
+    {
+        path: '/scenic-monitoring',
+        name: 'scenic-monitoring',
+        component: ScenicSpotMonitoringView
     }
 ]
 

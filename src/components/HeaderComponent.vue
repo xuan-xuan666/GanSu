@@ -32,6 +32,7 @@ const navItems = [
     { name: '数据资源', path: 'data-resources', to: '/data-resources' },
     { name: '专题数据', path: 'topic', to: '/topic-data' },
     { name: '模型资源', path: 'model', to: '/model' },
+    { name: '景区监测', path: 'scenic-monitoring', to: '/scenic-monitoring' },
     { name: '科普专栏', path: 'popularization', to: '/popularization' },
     { name: '平台介绍', path: 'platform-intro', to: '/platform-intro' }
 ]
